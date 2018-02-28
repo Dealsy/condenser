@@ -78,7 +78,7 @@ export default function reducer(state = defaultState, action = {}) {
         }
 
         case RECEIVE_ACCOUNTS: {
-            state.set(
+            return state.set(
                 'accounts',
                 payload.accounts
                     .map(acc =>

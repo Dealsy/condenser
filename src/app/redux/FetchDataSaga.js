@@ -117,7 +117,7 @@ function* getTransferUsers(pathname) {
  */
 function* getAccounts(usernames) {
     const accounts = yield call([api, api.getAccountsAsync], usernames);
-    yield put(globalActions.receiveAccounts({ accounts: accounts }));
+    yield put(globalActions.receiveAccounts({ accounts }));
 }
 
 export function* watchLocationChange() {

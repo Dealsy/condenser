@@ -90,6 +90,49 @@ describe('Global reducer', () => {
         ).toEqual(OrderedMap(payload.account.beOrderedMap));
     });
 
+    it('should return correct state for a RECEIVE_ACCOUNTS action', () => {
+        // Arrange
+        const payload = {
+            accounts: [{
+                name: 'foo',
+                witness_votes: 99,
+                beList: ['alice', 'bob', 'claire'],
+                beorderedMap: { foo: 'barman' },
+            },
+            {
+                name: 'bar',
+                witness_votes: 12,
+                beList: ['james', 'billy', 'samantha'],
+                beOrderedMap: { kewl: 'snoop' },
+            },
+        ]
+        };
+        const initial = reducer();
+        const expected = Map({
+            status: {},
+            accounts: [
+                OrderedMap({
+                    name: 'foo',
+                    witness_votes: 99,
+                    beList: List(['alice', 'bob', 'claire']),
+                    beorderedMap: OrderedMap({ foo: 'barman' }),
+                }),
+                OrderedMap({
+                    name: 'bar',
+                    witness_votes: 12,
+                    beList: List(['james', 'billy', 'samantha']),
+                    beOrderedMap: OrderedMap({ kewl: 'snoop' }),
+                }),
+            ],
+        });
+        // Act
+        const actual = reducer(initial, globalActions.receiveAccounts(payload));
+        // Assert
+        expect(
+            actual.get('accounts')
+        ).toEqual(expected.get('accounts'));
+    });
+
     it('should return correct state for a RECEIVE_COMMENT action', () => {
         // Arrange
         const payload = {
