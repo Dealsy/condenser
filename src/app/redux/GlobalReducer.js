@@ -11,6 +11,7 @@ export const defaultState = Map({ status: {} });
 const SET_COLLAPSED = 'global/SET_COLLAPSED';
 const RECEIVE_STATE = 'global/RECEIVE_STATE';
 const RECEIVE_ACCOUNT = 'global/RECEIVE_ACCOUNT';
+const RECEIVE_ACCOUNTS = 'global/RECEIVE_ACCOUNTS';
 const RECEIVE_COMMENT = 'global/RECEIVE_COMMENT';
 const RECEIVE_CONTENT = 'global/RECEIVE_CONTENT';
 const LINK_REPLY = 'global/LINK_REPLY';
@@ -69,9 +70,33 @@ export default function reducer(state = defaultState, action = {}) {
                 const isIndexed = Iterable.isIndexed(value);
                 return isIndexed ? value.toList() : value.toOrderedMap();
             });
+
             // Merging accounts: A get_state will provide a very full account but a get_accounts will provide a smaller version
             return state.updateIn(['accounts', account.get('name')], Map(), a =>
                 a.mergeDeep(account)
+            );
+        }
+
+        case RECEIVE_ACCOUNTS: {
+            state.set(
+                'accounts',
+                payload.accounts
+                    .map(acc =>
+                        fromJS(acc, (key, value) => {
+                            if (key === 'witness_votes') return value.toSet();
+                            const isIndexed = Iterable.isIndexed(value);
+                            return isIndexed
+                                ? value.toList()
+                                : value.toOrderedMap();
+                        })
+                    )
+                    .map(acc => {
+                        state.hasIn(['accounts'], acc.get('name')) &&
+                            acc.mergeDeep(
+                                state.getIn[('accounts', acc.get('name'))]
+                            );
+                        return acc;
+                    })
             );
         }
 
@@ -399,6 +424,11 @@ export const receiveState = payload => ({
 
 export const receiveAccount = payload => ({
     type: RECEIVE_ACCOUNT,
+    payload,
+});
+
+export const receiveAccounts = payload => ({
+    type: RECEIVE_ACCOUNTS,
     payload,
 });
 

@@ -117,11 +117,7 @@ function* getTransferUsers(pathname) {
  */
 function* getAccounts(usernames) {
     const accounts = yield call([api, api.getAccountsAsync], usernames);
-
-    // TODO: this is bad. we should have a globalActions.receiveAccounts
-    for (let account of accounts) {
-        yield put(globalActions.receiveAccount({ account: fromJS(account) }));
-    }
+    yield put(globalActions.receiveAccounts({ accounts: accounts }));
 }
 
 export function* watchLocationChange() {
