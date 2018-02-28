@@ -8,7 +8,7 @@ import BadActorList from 'app/utils/BadActorList';
 
 const MINIMUM_REPUTATION = 10;
 
-class Memo extends React.Component {
+export class Memo extends React.Component {
     static propTypes = {
         text: PropTypes.string,
         username: PropTypes.string,
